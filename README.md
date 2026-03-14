@@ -204,38 +204,6 @@ python -m app.etl.scheduler
 python -m app.etl.report --limit 5
 ```
 
-## Demo
-
-Минимальный сценарий, который удобно показать в README или на интервью:
-
-1. Поднять локальный стенд:
-
-```bash
-cp .env.example .env
-docker compose up --build
-```
-
-2. Запустить ETL вручную, если работаешь без scheduler:
-
-```bash
-python -m app.etl.run
-```
-
-3. Посмотреть последние batch runs:
-
-```bash
-python -m app.etl.report --limit 5
-```
-
-4. Проверить, что витрина наполнилась:
-
-```sql
-SELECT c.name, m.date, m.avg_temp, m.sum_precip
-FROM daily_city_metrics m
-JOIN cities c ON c.id = m.city_id
-ORDER BY m.date DESC, c.name;
-```
-
 ## Переменные окружения
 
 См. `.env.example`.
@@ -308,7 +276,7 @@ CI запускает:
 - `ruff check`
 - `pytest --cov=app`
 
-## Design Choices and Trade-offs
+## Заметки
 
 - Pipeline специально собран без внешнего оркестратора, чтобы фокус оставался на data modeling, quality checks и идемпотентной загрузке.
 - Витрина публикуется только по закрытым дням. Это снижает “свежесть” данных, но делает reporting слой стабильнее.
