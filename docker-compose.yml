@@ -16,6 +16,18 @@ services:
       timeout: 5s
       retries: 12
 
+  open-meteo-mock:
+    build: .
+    command: ["python", "-m", "app.scripts.mock_open_meteo"]
+    environment:
+      MOCK_OPEN_METEO_PORT: 8081
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/health').read()"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
   etl:
     build: .
     env_file:
@@ -23,6 +35,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      open-meteo-mock:
+        condition: service_healthy
+    environment:
+      OPEN_METEO_BASE_URL: http://open-meteo-mock:8081/v1/forecast
     restart: unless-stopped
 
   adminer:
